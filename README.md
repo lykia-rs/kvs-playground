@@ -1,6 +1,7 @@
 # kvs-playground
 
 This repo is basically for implementations of course "Practical Networked Applications in Rust" provided by pingcap/talent-plan (https://github.com/pingcap/talent-plan/tree/master/courses/rust).
+The implementation for Project 4 will be used as the base of LykiaDB storage engine.
 
 Project completion: 
 
