@@ -1,5 +1,4 @@
 use clap::{Parser, Subcommand};
-use kvs::KvStore;
 use std::process::exit;
 
 #[derive(Parser)]
