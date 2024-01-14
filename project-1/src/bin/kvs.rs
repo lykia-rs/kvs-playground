@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use project_1::KvStore;
 use std::process::exit;
 
 #[derive(Parser)]
@@ -18,18 +19,19 @@ enum Commands {
 
 fn main() {
     let cli = Cli::parse();
+    let mut store = KvStore::new();
 
     match &cli.command {
         Commands::Get { key } => {
-            eprintln!("unimplemented");
+            store.get(key.to_owned());
             exit(1);
         }
         Commands::Set { key, value } => {
-            eprintln!("unimplemented");
+            store.set(key.to_owned(), value.to_owned());
             exit(1);
         }
         Commands::Rm { key } => {
-            eprintln!("unimplemented");
+            store.remove(key.to_owned());
             exit(1);
         }
     }
