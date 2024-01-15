@@ -24,15 +24,15 @@ fn main() {
     match &cli.command {
         Commands::Get { key } => {
             store.get(key.to_owned());
-            exit(1);
+            exit(0);
         }
         Commands::Set { key, value } => {
             store.set(key.to_owned(), value.to_owned());
-            exit(1);
+            exit(0);
         }
         Commands::Rm { key } => {
             store.remove(key.to_owned());
-            exit(1);
+            exit(0);
         }
     }
 }
