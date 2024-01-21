@@ -6,6 +6,8 @@ use std::process::Command;
 use tempfile::TempDir;
 use walkdir::WalkDir;
 
+pub use project_2::{KvsError, Result};
+
 // `kvs` with no args should exit with a non-zero code.
 #[test]
 fn cli_no_args() {
