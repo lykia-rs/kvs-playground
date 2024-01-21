@@ -1,9 +1,8 @@
-use std::path::Path;
 use crate::error::Result;
+use std::path::Path;
 pub struct KvStore;
 
 impl KvStore {
-
     pub fn new() -> KvStore {
         KvStore
     }
@@ -23,5 +22,4 @@ impl KvStore {
     pub fn remove(&mut self, key: String) -> Result<()> {
         Ok(())
     }
-
 }
