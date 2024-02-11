@@ -1,7 +1,24 @@
 use serde::{Serialize, Deserialize};
 
 use crate::error::Result;
-use std::{path::PathBuf, collections::{HashMap, BTreeMap}, fs::File, io::{Read, Seek, BufReader, Write, BufWriter, SeekFrom, self}};
+use std::{collections::{BTreeMap, HashMap}, ffi::OsStr, fs::{self, File}, io::{self, BufReader, BufWriter, Read, Seek, SeekFrom, Write}, path::{Path, PathBuf}};
+
+fn sorted_gen_list(path: &Path) -> Result<Vec<u64>> {
+    let mut gen_list: Vec<u64> = fs::read_dir(&path)?
+        .flat_map(|res| -> Result<_> { Ok(res?.path())})
+        .filter(|path| path.is_file() && path.extension() == Some("log".as_ref()))
+        .flat_map(|path| {
+            path.file_name()
+                .and_then(OsStr::to_str)
+                .map(|s| s.trim_end_matches(".log"))
+                .map(str::parse::<u64>)
+        })
+        .flatten()
+        .collect();
+    gen_list.sort_unstable();
+    Ok(gen_list)
+}
+
 pub struct KvStore {
     path: PathBuf,
     readers: HashMap<u64, BufReaderWithPos<File>>,
@@ -14,6 +31,20 @@ pub struct KvStore {
 impl KvStore {
 
     pub fn open(path: impl Into<PathBuf>) -> Result<KvStore> {
+        let path = path.into();
+        fs::create_dir_all(&path);
+
+        let mut readers = HashMap::new();
+        let mut index = BTreeMap::new();
+
+        let gen_list = sorted_gen_list(&path);
+        let mut uncompacted = 0;
+
+        for &gen in &gen_list {
+            let mut reader = BufReaderWithPos::new(File::open(log_path(&path, gen))?)?;
+            uncompacted += load(gen, &mut reader, &mut index)?;
+            readers.insert(gen, reader);
+        }
 
         Ok(KvStore {
             path: path.into(),
